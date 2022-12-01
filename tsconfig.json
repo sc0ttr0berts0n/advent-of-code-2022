@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "target": "ES2019",
+        "outDir": "./public/js/",
+        "sourceMap": true
+    },
+    // "include": ["src/solutions/13a.ts"],
+    "exclude": ["node_modules", "public/js"]
+}
