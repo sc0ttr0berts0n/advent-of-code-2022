@@ -12,7 +12,7 @@ const groups = Array.from(
 );
 
 const getCommonElement = (group: string[]) => {
-    // group = group.sort((a, b) => a.length - b.length);
+    group = group.sort((a, b) => a.length - b.length);
     return group[0]
         .split('')
         .find((el: string) => group[1].includes(el) && group[2].includes(el));
