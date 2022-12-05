@@ -12,7 +12,7 @@
             //     "${file}"
             // ],
             "args": [
-                "${workspaceFolder}/src/solutions/03b.ts"
+                "${workspaceFolder}/src/solutions/05.ts"
             ],
             "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
             "internalConsoleOptions": "openOnSessionStart",
