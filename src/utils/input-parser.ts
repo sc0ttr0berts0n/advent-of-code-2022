@@ -23,4 +23,7 @@ export default class InputParser {
     toArray(): string[] {
         return this.file.split(this.separator);
     }
+    toRaw(): string {
+        return this.file;
+    }
 }
