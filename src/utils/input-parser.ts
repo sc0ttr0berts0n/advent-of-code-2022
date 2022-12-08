@@ -2,8 +2,8 @@ import path = require('path');
 import fs = require('fs');
 
 interface InputParserOptions {
-    separator?: string;
-    path?: string;
+    separator: string;
+    path: string;
 }
 
 export default class InputParser {
@@ -12,7 +12,7 @@ export default class InputParser {
     private path: string;
     public file: string;
 
-    constructor(filename: string, options?: InputParserOptions) {
+    constructor(filename: string, options?: Partial<InputParserOptions>) {
         this.filename = path.basename(filename);
         this.separator = options?.separator ?? '\r\n';
         this.path = options?.path ?? path.resolve('src/inputs');
