@@ -36,6 +36,11 @@ class SegmentWorld {
         this._debug = val;
     }
 
+    /**
+     * Break string instructions down to parseable commands
+     * @param instructions new line split array of instructions
+     * @returns
+     */
     private _parseInstructions(instructions: string[]): Command[] {
         return instructions.map((command): Command => {
             const [dirString, number] = command.split(' ');
@@ -49,12 +54,15 @@ class SegmentWorld {
         });
     }
 
+    /**
+     * Perform the commands in the instruction set
+     */
     runInstructions() {
         this._instructionSet.forEach((cmd) => {
             // do mini steps to keep the tail close
             const [dir, amt] = cmd;
             for (let i = 0; i < amt; i++) {
-                this._moveHead(dir, 1);
+                this._moveHead(dir);
                 this._segments.slice(1).forEach((seg) => seg.followParent());
                 this._tailLocations.add(
                     `x${this._segments.at(-1).pos.x},y${
@@ -80,22 +88,14 @@ class SegmentWorld {
         }
     }
 
-    private _moveHead(dir: EDirection, amt: number) {
-        // invert if negative dir
-        if (dir === EDirection.UP || dir === EDirection.LEFT) {
-            amt *= -1;
-        }
-
-        // move it
-        if (dir === EDirection.UP || dir === EDirection.DOWN) {
-            this.head.moveY(amt);
-        }
-        if (dir === EDirection.LEFT || dir === EDirection.RIGHT) {
-            this.head.moveX(amt);
-        }
+    private _moveHead(dir: EDirection) {
+        if (dir === EDirection.UP) this.head.moveY(-1);
+        if (dir === EDirection.DOWN) this.head.moveY(1);
+        if (dir === EDirection.LEFT) this.head.moveX(-1);
+        if (dir === EDirection.RIGHT) this.head.moveX(1);
     }
 
-    getTailLocationCount() {
+    get tailLocationCount() {
         return this._tailLocations.size;
     }
 
@@ -138,7 +138,6 @@ class SegmentWorld {
 
 class Segment {
     private _parent: null | Segment = null;
-    private _lastPos: Vec2 = { x: undefined, y: undefined };
     private _pos: Vec2 = { x: undefined, y: undefined };
     constructor(parent: null | Segment) {
         this._parent = parent ?? null;
@@ -156,34 +155,18 @@ class Segment {
     }
 
     moveX(num: number) {
-        // track last pos
-        this._lastPos.x = this._pos.x;
-        this._lastPos.y = this._pos.y;
-
         // set pos
         this._pos.x += num;
     }
 
     moveY(num: number) {
-        // track last pos
-        this._lastPos.x = this._pos.x;
-        this._lastPos.y = this._pos.y;
-
         // set pos
         this._pos.y += num;
     }
 
     setPos(vec: Vec2) {
-        // track last pos
-        this._lastPos.x = this._pos.x;
-        this._lastPos.y = this._pos.y;
-
         this._pos.x = vec.x;
         this._pos.y = vec.y;
-    }
-
-    get lastPos() {
-        return this._lastPos;
     }
 
     distanceToParent(): Vec2 {
@@ -198,19 +181,22 @@ class Segment {
         const dist = this.distanceToParent();
         const absDist = { x: Math.abs(dist.x), y: Math.abs(dist.y) };
 
-        // determine if action is needed
+        // Action is only needed if abs dist is greater than 1
         if (absDist.x <= 1 && absDist.y <= 1) return;
 
         // correct on the greater axis
         if (absDist.x > absDist.y) {
+            // if x is greater
             const x = this._parent.pos.x + Math.sign(dist.x);
             const y = this._parent.pos.y;
             this.setPos({ x, y });
         } else if (absDist.x < absDist.y) {
+            // if y is greater
             const x = this._parent.pos.x;
             const y = this._parent.pos.y + Math.sign(dist.y);
             this.setPos({ x, y });
         } else {
+            // if both are the same, move diagonally
             const x = this._parent.pos.x + Math.sign(dist.x);
             const y = this._parent.pos.y + Math.sign(dist.y);
             this.setPos({ x, y });
@@ -218,16 +204,18 @@ class Segment {
     }
 }
 
+// model segment world with head / tail only
 const swht = new SegmentWorld(instructions);
 swht.addSegments(1);
 swht.runInstructions();
-const countHT = swht.getTailLocationCount();
+const countHT = swht.tailLocationCount;
 console.log({ countHT });
 
+// model segment world with ten segments
 const sw10 = new SegmentWorld(instructions);
 sw10.addSegments(9);
 sw10.runInstructions();
-const count10 = sw10.getTailLocationCount();
+const count10 = sw10.tailLocationCount;
 console.log({ count10 });
 
 debugger;
