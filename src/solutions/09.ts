@@ -14,10 +14,11 @@ interface Vec2 {
     y: number;
 }
 
-const parser = new InputParser('09test');
+const parser = new InputParser('09');
 const instructions = parser.toArray();
 
 class SegmentWorld {
+    private _debug = false;
     private _instructionSet: Command[];
     private _segments: Segment[] = [];
     private _tailLocations: Set<string> = new Set();
@@ -29,6 +30,10 @@ class SegmentWorld {
 
     get head() {
         return this._segments.find((seg) => seg.isHead);
+    }
+
+    set debug(val: boolean) {
+        this._debug = val;
     }
 
     private _parseInstructions(instructions: string[]): Command[] {
@@ -56,7 +61,7 @@ class SegmentWorld {
                         this._segments.at(-1).pos.y
                     }`
                 );
-                this._logPosList();
+                if (this._debug) this._logPosList();
             }
         });
     }
@@ -196,21 +201,33 @@ class Segment {
         // determine if action is needed
         if (absDist.x <= 1 && absDist.y <= 1) return;
 
-        const { x, y } = this._parent.lastPos;
-        this.setPos({ x, y });
+        // correct on the greater axis
+        if (absDist.x > absDist.y) {
+            const x = this._parent.pos.x + Math.sign(dist.x);
+            const y = this._parent.pos.y;
+            this.setPos({ x, y });
+        } else if (absDist.x < absDist.y) {
+            const x = this._parent.pos.x;
+            const y = this._parent.pos.y + Math.sign(dist.y);
+            this.setPos({ x, y });
+        } else {
+            const x = this._parent.pos.x + Math.sign(dist.x);
+            const y = this._parent.pos.y + Math.sign(dist.y);
+            this.setPos({ x, y });
+        }
     }
 }
 
-// const swht = new SegmentWorld(instructions);
-// swht.addSegments(1);
-// swht.runInstructions();
-// const countHT = swht.getTailLocationCount();
-// console.log({ htCount: countHT });
+const swht = new SegmentWorld(instructions);
+swht.addSegments(1);
+swht.runInstructions();
+const countHT = swht.getTailLocationCount();
+console.log({ countHT });
 
 const sw10 = new SegmentWorld(instructions);
-sw10.addSegments(10);
+sw10.addSegments(9);
 sw10.runInstructions();
 const count10 = sw10.getTailLocationCount();
-console.log({ count: count10 });
+console.log({ count10 });
 
 debugger;
