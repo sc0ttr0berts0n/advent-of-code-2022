@@ -69,8 +69,8 @@ class SegmentWorld {
                         this._segments.at(-1).pos.y
                     }`
                 );
-                if (this._debug) this._logPosList();
             }
+            if (this._debug) this._logPosList();
         });
     }
 
@@ -100,7 +100,6 @@ class SegmentWorld {
     }
 
     private _logPosList() {
-        console.log('\n');
         const xSet = this._segments.map((el) => el.pos.x);
         const ySet = this._segments.map((el) => el.pos.y);
         const xMin = Math.min(...xSet);
@@ -127,10 +126,12 @@ class SegmentWorld {
             }
             output = `${output}\n${line}`;
         }
+        console.clear();
+        console.log('\n');
         console.log(output);
         this._segments.forEach((seg, index) =>
             console.log(
-                `${index === 0 ? 'H' : index}: {x:${seg.pos.x}, y:${seg.pos.y}`
+                `${index === 0 ? 'H' : index}: {x:${seg.pos.x}, y:${seg.pos.y}}`
             )
         );
     }
@@ -214,6 +215,7 @@ console.log({ countHT });
 // model segment world with ten segments
 const sw10 = new SegmentWorld(instructions);
 sw10.addSegments(9);
+sw10.debug = true;
 sw10.runInstructions();
 const count10 = sw10.tailLocationCount;
 console.log({ count10 });
